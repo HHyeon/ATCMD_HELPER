@@ -1,0 +1,103 @@
+﻿<Window x:Class="ATCMD_HELPER.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ATCMD_HELPER"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded" Closing="Window_Closing">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid
+            Grid.Column="0"
+            >
+            
+            
+            <StackPanel
+                Width="200"
+                Orientation="Vertical"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Center"
+                >
+
+                <ComboBox 
+                    x:Name="serialportselection"
+                    Margin="2" 
+                    PreviewMouseDown="serialportselection_PreviewMouseDown"
+                    />
+
+                <Button
+                    x:Name="serialportselectionconfirm"
+                    Content="open"
+                    Margin="2" 
+                    Click="serialportselectionconfirm_Click"
+                    />
+
+                <Button
+                    x:Name="serialportclose"
+                    Content="close"
+                    Margin="2" Click="serialportclose_Click" 
+                    />
+                
+            </StackPanel>
+            
+            
+
+            <StackPanel
+                Width="200"
+                Orientation="Vertical"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                >
+
+                <Button
+                    x:Name="action0"
+                    Content="ACTION 0"
+                    Margin="2" Click="action0_Click"
+                    />
+
+                <Button
+                    x:Name="action1"
+                    Content="ACTION 1"
+                    Margin="2" Click="action1_Click"
+                    />
+
+                <Button
+                    x:Name="action2"
+                    Content="ACTION 2"
+                    Margin="2" Click="action2_Click"
+                    />
+
+                <Button
+                    x:Name="action3"
+                    Content="ACTION 3"
+                    Margin="2" Click="action3_Click"
+                    />
+
+            </StackPanel>
+            
+        </Grid>
+
+        <Grid
+            Grid.Column="1"
+            >
+
+            <TextBox
+                Margin="2"
+                x:Name="tb_logging"
+                IsReadOnly="True"
+                HorizontalContentAlignment="Left"
+                VerticalContentAlignment="Top"
+                VerticalScrollBarVisibility="Auto"
+                TextWrapping="Wrap"
+                />
+
+
+        </Grid>
+
+    </Grid>
+</Window>
