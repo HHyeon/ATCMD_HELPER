@@ -35,12 +35,84 @@ namespace ATCMD_HELPER
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            Command_layout_add_one("AT+MODE?\r");
+            Command_layout_add_one("AT+PANDLST?\r");
+            Command_layout_add_one("AT+PANDALIVE?\r");
+            Command_layout_add_one("AT+BEARER=4\rOK\r");
+
             queued_logging_timer = new System.Timers.Timer();
             queued_logging_timer.Interval = 100;
             queued_logging_timer.Elapsed += Queued_logging_timer_Elapsed;
             queued_logging_timer.Start();
 
             println("App Started");
+        }
+
+        void Command_layout_add_one(string cmd)
+        {
+            string _cmd = cmd;
+            _cmd = _cmd.Replace("\r", "\\r");
+            _cmd = _cmd.Replace("\n", "\\n");
+
+            Grid grid = new Grid();
+
+            ColumnDefinition cd1 = new ColumnDefinition();
+            cd1.Width = new GridLength(5, GridUnitType.Star);
+            grid.ColumnDefinitions.Add(cd1);
+
+            ColumnDefinition cd2 = new ColumnDefinition();
+            cd2.Width = new GridLength(2, GridUnitType.Star);
+            grid.ColumnDefinitions.Add(cd2);
+
+            TextBox tb = new TextBox();
+            tb.Margin = new Thickness(2);
+            tb.Text = _cmd;
+            Grid.SetColumn(tb, 0);
+
+            Button btn = new Button();
+            btn.Margin = new Thickness(2);
+            btn.Content = "send";
+            btn.Click += (sender, e) =>
+            {
+                try
+                {
+                    //println((sender as Button).Parent.ToString());
+                    Button? btn = sender as Button;
+                    if (btn == null) return;
+                    Grid? grid = btn.Parent as Grid;
+                    if (grid == null) return;
+
+                    string cmdstosent = null;
+
+                    foreach (UIElement element in grid.Children)
+                    {
+                        if (element is TextBox textBox && Grid.GetRow(textBox) == Grid.GetRow(sender as Button))
+                        {
+                            cmdstosent = textBox.Text;
+                            break;
+                        }
+                    }
+
+
+                    if(cmdstosent != null)
+                    {
+                        cmdstosent = cmdstosent.Replace("\\r", "\r");
+                        cmdstosent = cmdstosent.Replace("\\n", "\n");
+                        sendmsg(cmdstosent);
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    println(ex.ToString());
+                }
+            };
+            Grid.SetColumn(btn, 1);
+
+            grid.Children.Add(tb);
+            grid.Children.Add(btn);
+
+            stackpanel_commandlists.Children.Add(grid);
         }
 
         ConcurrentQueue<string> LogMessageQueue = new ConcurrentQueue<string>();
@@ -95,6 +167,7 @@ namespace ATCMD_HELPER
 
                     serialPort = new SerialPort();
                     string? portname = null;
+                    int rate = 460800;
 
                     await Task.Factory.StartNew(() =>
                     {
@@ -106,10 +179,10 @@ namespace ATCMD_HELPER
 
                     if (portname == null) return;
 
-                    println("opening " + portname);
+                    println("opening " + portname + ", " + rate);
 
                     serialPort.PortName = portname;
-                    serialPort.BaudRate = 460800;
+                    serialPort.BaudRate = rate;
                     serialPort.DataReceived += SerialPort_DataReceived;
 
                     serialPort.ErrorReceived += (sender, e) =>
@@ -152,7 +225,7 @@ namespace ATCMD_HELPER
                 string indata = sp.ReadExisting();
                 indata = indata.Replace("\r", "\\r");
                 indata = indata.Replace("\n", "\\n");
-                println(indata);
+                println("RX: " + indata);
             }
         }
 
@@ -176,26 +249,6 @@ namespace ATCMD_HELPER
             }
         }
 
-        private void action0_Click(object sender, RoutedEventArgs e)
-        {
-            sendmsg("AT+MODE?\r");
-        }
-
-        private void action1_Click(object sender, RoutedEventArgs e)
-        {
-            sendmsg("AT+PANDLST?\r");
-        }
-
-        private void action2_Click(object sender, RoutedEventArgs e)
-        {
-            sendmsg("AT+PANDALIVE?\r");
-        }
-
-        private void action3_Click(object sender, RoutedEventArgs e)
-        {
-            sendmsg("AT+BEARER=4\rOK\r");
-        }
-
         private void serialportselection_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             refreshcomportlisttoui();
@@ -204,6 +257,7 @@ namespace ATCMD_HELPER
 
         void refreshcomportlisttoui()
         {
+            println("Refreshing Comport list");
             serialportselection.Items.Clear();
             SerialPort.GetPortNames().ToList().ForEach(port =>
             {
