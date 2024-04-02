@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ATCMD_HELPER"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded" Closing="Window_Closing" ResizeMode="NoResize">
+        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded" Closing="Window_Closing" >
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="250"/>
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
 
@@ -63,7 +63,6 @@
                 HorizontalContentAlignment="Left"
                 VerticalContentAlignment="Top"
                 VerticalScrollBarVisibility="Auto"
-                TextWrapping="Wrap"
                 FontFamily="consolas"
                 />
 
