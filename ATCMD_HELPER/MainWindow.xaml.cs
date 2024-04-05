@@ -39,6 +39,9 @@ namespace ATCMD_HELPER
             Command_layout_add_one("AT+PANDLST?\r");
             Command_layout_add_one("AT+PANDALIVE?\r");
             Command_layout_add_one("AT+BEARER=4\rOK\r");
+            Command_layout_add_one("");
+            Command_layout_add_one("");
+            Command_layout_add_one("");
 
             queued_logging_timer = new System.Timers.Timer();
             queued_logging_timer.Interval = 100;
@@ -96,9 +99,12 @@ namespace ATCMD_HELPER
 
                     if(cmdstosent != null)
                     {
-                        cmdstosent = cmdstosent.Replace("\\r", "\r");
-                        cmdstosent = cmdstosent.Replace("\\n", "\n");
-                        sendmsg(cmdstosent);
+                        if(cmdstosent.Length != 0)
+                        {
+                            cmdstosent = cmdstosent.Replace("\\r", "\r");
+                            cmdstosent = cmdstosent.Replace("\\n", "\n");
+                            sendmsg(cmdstosent);
+                        }
                     }
 
                 }
