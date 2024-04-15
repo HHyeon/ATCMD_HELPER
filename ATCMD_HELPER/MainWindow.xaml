@@ -23,11 +23,27 @@
                 VerticalAlignment="Top"
                 >
 
-                <ComboBox 
-                    x:Name="serialportselection"
-                    Margin="2" 
-                    PreviewMouseDown="serialportselection_PreviewMouseDown"
-                    />
+                <Grid >
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <ComboBox 
+                        x:Name="serialportselection"
+                        Grid.Column="0"
+                        Margin="2" 
+                        PreviewMouseDown="serialportselection_PreviewMouseDown"
+                        />
+
+                    <ComboBox
+                        x:Name="serialportbuadselection"
+                        Grid.Column="1"
+                        Margin="2" 
+                        />
+
+                </Grid>
 
                 <Button
                     x:Name="serialportselectionconfirm"

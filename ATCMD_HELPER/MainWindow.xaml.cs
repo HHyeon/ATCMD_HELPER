@@ -39,14 +39,23 @@ namespace ATCMD_HELPER
             Command_layout_add_one("AT+PANDLST?\r");
             Command_layout_add_one("AT+PANDALIVE?\r");
             Command_layout_add_one("AT+BEARER=4\rOK\r");
-            Command_layout_add_one("");
-            Command_layout_add_one("");
+            Command_layout_add_one("AT+MMID?\r");
+            Command_layout_add_one("AT+EBR?\r");
             Command_layout_add_one("");
 
             queued_logging_timer = new System.Timers.Timer();
             queued_logging_timer.Interval = 100;
             queued_logging_timer.Elapsed += Queued_logging_timer_Elapsed;
             queued_logging_timer.Start();
+
+            serialportbuadselection.ItemsSource = new object[]
+            {
+                9600,
+                115200,
+                460800
+            };
+
+            serialportbuadselection.SelectedIndex = 2;
 
             println("App Started");
         }
@@ -162,6 +171,7 @@ namespace ATCMD_HELPER
         private void serialportselectionconfirm_Click(object sender, RoutedEventArgs e)
         {
             if (serialportselection.SelectedItem == null) return;
+            if (serialportbuadselection.SelectedItem == null) return;
 
             Task.Factory.StartNew(async () =>
             {
@@ -173,17 +183,19 @@ namespace ATCMD_HELPER
 
                     serialPort = new SerialPort();
                     string? portname = null;
-                    int rate = 460800;
+                    int rate = 0;
 
                     await Task.Factory.StartNew(() =>
                     {
                         Dispatcher.Invoke(() =>
                         {
                             portname = serialportselection.SelectedItem as string;
+                            rate = (int)serialportbuadselection.SelectedValue;
                         });
                     });
 
                     if (portname == null) return;
+                    if (rate == 0) return;
 
                     println("opening " + portname + ", " + rate);
 
@@ -218,7 +230,7 @@ namespace ATCMD_HELPER
                 }
                 catch (Exception ex)
                 {
-                    println(ex.ToString());
+                    println(ex.StackTrace.ToString());
                 }
             });
         }
