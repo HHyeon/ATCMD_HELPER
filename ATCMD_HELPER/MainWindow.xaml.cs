@@ -41,6 +41,11 @@ namespace ATCMD_HELPER
             Command_layout_add_one("AT+BEARER=4\rOK\r");
             Command_layout_add_one("AT+MMID?\r");
             Command_layout_add_one("AT+EBR?\r");
+            Command_layout_add_one("AT+METERID?\r");
+            Command_layout_add_one("");
+            Command_layout_add_one("");
+            Command_layout_add_one("");
+            Command_layout_add_one("");
             Command_layout_add_one("");
 
             queued_logging_timer = new System.Timers.Timer();
