@@ -36,14 +36,14 @@ namespace ATCMD_HELPER
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             Command_layout_add_one("AT+MODE?\r");
-            Command_layout_add_one("AT+PANDLST?\r");
-            Command_layout_add_one("AT+PANDALIVE?\r");
-            Command_layout_add_one("AT+BEARER=4\rOK\r");
             Command_layout_add_one("AT+MMID?\r");
             Command_layout_add_one("AT+EBR?\r");
             Command_layout_add_one("AT+METERID?\r");
-            Command_layout_add_one("");
-            Command_layout_add_one("");
+            Command_layout_add_one("AT+PANDLST?\r");
+            Command_layout_add_one("AT+PANDALIVE?\r");
+            Command_layout_add_one("AT+BEARER=4\rOK\r");
+            Command_layout_add_one("AT+CHAN?\r");
+            Command_layout_add_one("AT+FUN:1\r");
             Command_layout_add_one("");
             Command_layout_add_one("");
             Command_layout_add_one("");
