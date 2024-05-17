@@ -44,7 +44,7 @@ namespace ATCMD_HELPER
             Command_layout_add_one("AT+BEARER=4\rOK\r");
             Command_layout_add_one("AT+CHAN?\r");
             Command_layout_add_one("AT+FUN:1\r");
-            Command_layout_add_one("");
+            Command_layout_add_one("AT+NWK?\r");
             Command_layout_add_one("");
             Command_layout_add_one("");
 
