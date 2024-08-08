@@ -45,7 +45,7 @@ namespace ATCMD_HELPER
             Command_layout_add_one("AT+CHAN?\r");
             Command_layout_add_one("AT+FUN:1\r");
             Command_layout_add_one("AT+NWK?\r");
-            Command_layout_add_one("");
+            Command_layout_add_one("AT+PING:1024,10,200,3038FFF530000066\r");
             Command_layout_add_one("");
 
             queued_logging_timer = new System.Timers.Timer();
