@@ -267,7 +267,36 @@ namespace ATCMD_HELPER
                 }
                 else
                 {
-                    println("serialport invalid");
+                    println("serialport invalid - try open");
+
+                    Task.Factory.StartNew(async () =>
+                    {
+                        await Task.Factory.StartNew(() =>
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                serialportselectionconfirm_Click(null, null);
+                            });
+                        });
+
+                        await Task.Delay(500);
+
+                        if (serialPort.IsOpen)
+                        {
+                            serialPort.Write(s);
+
+                            string s1 = s;
+                            s1 = s1.Replace("\r", "\\r");
+                            s1 = s1.Replace("\n", "\\n");
+                            println(s1);
+                        }
+                        else
+                        {
+                            println("serialport invalid even retry");
+                        }
+
+                    });
+
                 }
             }
         }
