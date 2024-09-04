@@ -36,15 +36,25 @@ namespace ATCMD_HELPER
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             Command_layout_add_one("AT+MODE?\r");
+            Command_layout_add_one("AT+MODE:0\r");
+            Command_layout_add_one("AT+MODE:1\r");
             Command_layout_add_one("AT+METERID?\r");
+            Command_layout_add_one("AT+MMID?\r");
             Command_layout_add_one("AT+PANDLST?\r");
             Command_layout_add_one("AT+DEVLST?\r");
             Command_layout_add_one("AT+CHAN?\r");
             Command_layout_add_one("AT+FUN:1\r");
             Command_layout_add_one("AT+NWK?\r");
             Command_layout_add_one("AT+PING:1024,10,200,3038FFF530000066\r");
+            Command_layout_add_one("AT+WHITEDV?\r");
+            Command_layout_add_one("AT+WHITEDV:1,1,3038FFF530000066?\r");
             Command_layout_add_one("AT+WHITECD?\r");
             Command_layout_add_one("AT+WHITECD:3038FFF530000066\r");
+            Command_layout_add_one("");
+            Command_layout_add_one("");
+            Command_layout_add_one("");
+            Command_layout_add_one("");
+            Command_layout_add_one("");
 
             queued_logging_timer = new System.Timers.Timer();
             queued_logging_timer.Interval = 100;
