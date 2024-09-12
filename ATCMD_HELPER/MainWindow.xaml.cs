@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO.Ports;
 using System.Linq;
 using System.Printing;
+using System.Security.RightsManagement;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -27,6 +30,7 @@ namespace ATCMD_HELPER
         object locking_for_serialPort = new object();
         SerialPort serialPort = new SerialPort();
         System.Timers.Timer queued_logging_timer = new System.Timers.Timer();
+        System.Timers.Timer commands_interval_send_timer = new System.Timers.Timer();
 
         public MainWindow()
         {
@@ -40,6 +44,7 @@ namespace ATCMD_HELPER
             Command_layout_add_one("AT+MODE:1\r");
             Command_layout_add_one("AT+METERID?\r");
             Command_layout_add_one("AT+MMID?\r");
+            Command_layout_add_one("AT+MAC?\r");
             Command_layout_add_one("AT+PANDLST?\r");
             Command_layout_add_one("AT+DEVLST?\r");
             Command_layout_add_one("AT+CHAN?\r");
@@ -55,11 +60,20 @@ namespace ATCMD_HELPER
             Command_layout_add_one("");
             Command_layout_add_one("");
             Command_layout_add_one("");
+            Command_layout_add_one("");
+            Command_layout_add_one("");
+            Command_layout_add_one("");
+            Command_layout_add_one("");
 
             queued_logging_timer = new System.Timers.Timer();
             queued_logging_timer.Interval = 100;
             queued_logging_timer.Elapsed += Queued_logging_timer_Elapsed;
             queued_logging_timer.Start();
+
+            commands_interval_send_timer = new System.Timers.Timer();
+            commands_interval_send_timer.Interval = 1000;
+            commands_interval_send_timer.Elapsed += Commands_interval_send_timer_Elapsed;
+            commands_interval_send_timer.Start();
 
             serialportbuadselection.ItemsSource = new object[]
             {
@@ -72,7 +86,6 @@ namespace ATCMD_HELPER
 
             println("App Started");
         }
-
         void Command_layout_add_one(string cmd)
         {
             string _cmd = cmd;
@@ -85,9 +98,12 @@ namespace ATCMD_HELPER
             cd1.Width = new GridLength(5, GridUnitType.Star);
             grid.ColumnDefinitions.Add(cd1);
 
-            ColumnDefinition cd2 = new ColumnDefinition();
-            cd2.Width = new GridLength(2, GridUnitType.Star);
-            grid.ColumnDefinitions.Add(cd2);
+            for(int i=0;i<2;i++)
+            {
+                ColumnDefinition cd2 = new ColumnDefinition();
+                cd2.Width = new GridLength(50);
+                grid.ColumnDefinitions.Add(cd2);
+            }
 
             TextBox tb = new TextBox();
             tb.Margin = new Thickness(2);
@@ -106,18 +122,18 @@ namespace ATCMD_HELPER
                     if (btn == null) return;
                     Grid? grid = btn.Parent as Grid;
                     if (grid == null) return;
-
-                    string cmdstosent = null;
+                    string? cmdstosent = null;
 
                     foreach (UIElement element in grid.Children)
                     {
-                        if (element is TextBox textBox && Grid.GetRow(textBox) == Grid.GetRow(sender as Button))
+                        if (element is TextBox textBox)
                         {
-                            cmdstosent = textBox.Text;
-                            break;
+                            if(Grid.GetColumn(textBox) == 0)
+                            {
+                                cmdstosent = textBox.Text;
+                            }
                         }
                     }
-
 
                     if(cmdstosent != null)
                     {
@@ -137,11 +153,87 @@ namespace ATCMD_HELPER
             };
             Grid.SetColumn(btn, 1);
 
+            TextBox textBox1 = new TextBox();
+            textBox1.Margin = new Thickness(2);
+            textBox1.Text = "0";
+            textBox1.HorizontalContentAlignment = HorizontalAlignment.Center;
+            textBox1.VerticalContentAlignment = VerticalAlignment.Center;
+            Grid.SetColumn(textBox1, 2);
+
             grid.Children.Add(tb);
             grid.Children.Add(btn);
+            grid.Children.Add(textBox1);
 
             stackpanel_commandlists.Children.Add(grid);
         }
+
+        uint secondly_accumulatly_number = 0;
+        private void Commands_interval_send_timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+        {
+            
+            Dispatcher.Invoke(() =>
+            {
+                secondly_accumulatly_number++;
+
+                foreach (UIElement element in stackpanel_commandlists.Children)
+                {
+                    try
+                    {
+                        Grid? grid = element as Grid;
+                        if (grid == null) return;
+                        string? cmdstosent = null;
+                        string? strintv = null;
+
+                        foreach (UIElement element2 in grid.Children)
+                        {
+                            if (element2 is TextBox textBox)
+                            {
+                                int cidx = Grid.GetColumn(textBox);
+                                if (cidx == 0)
+                                {
+                                    cmdstosent = textBox.Text;
+                                }
+                                else if (cidx == 2)
+                                {
+                                    strintv = textBox.Text;
+                                }
+                            }
+                        }
+
+                        int intv;
+                        if (strintv != null && cmdstosent != null && int.TryParse(strintv, out intv))
+                        {
+                            if(intv > 0)
+                            {
+                                if(secondly_accumulatly_number % intv == 0)
+                                {
+                                    if (cmdstosent.Length != 0)
+                                    {
+                                        cmdstosent = cmdstosent.Replace("\\r", "\r");
+                                        cmdstosent = cmdstosent.Replace("\\n", "\n");
+                                        sendmsg(cmdstosent);
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            println("Something Parsing Error");
+                        }
+
+                    }
+                    catch(Exception e)
+                    {
+                        println(e.ToString());
+                    }
+                }
+            });
+
+
+
+        }
+
+        
 
         ConcurrentQueue<string> LogMessageQueue = new ConcurrentQueue<string>();
         private void Queued_logging_timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
