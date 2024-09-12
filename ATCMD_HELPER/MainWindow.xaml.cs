@@ -170,63 +170,68 @@ namespace ATCMD_HELPER
         uint secondly_accumulatly_number = 0;
         private void Commands_interval_send_timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
         {
-            
-            Dispatcher.Invoke(() =>
+
+            Task.Factory.StartNew(() =>
             {
-                secondly_accumulatly_number++;
-
-                foreach (UIElement element in stackpanel_commandlists.Children)
+                Dispatcher.Invoke(async () =>
                 {
-                    try
+                    secondly_accumulatly_number++;
+
+                    foreach (UIElement element in stackpanel_commandlists.Children)
                     {
-                        Grid? grid = element as Grid;
-                        if (grid == null) return;
-                        string? cmdstosent = null;
-                        string? strintv = null;
-
-                        foreach (UIElement element2 in grid.Children)
+                        try
                         {
-                            if (element2 is TextBox textBox)
-                            {
-                                int cidx = Grid.GetColumn(textBox);
-                                if (cidx == 0)
-                                {
-                                    cmdstosent = textBox.Text;
-                                }
-                                else if (cidx == 2)
-                                {
-                                    strintv = textBox.Text;
-                                }
-                            }
-                        }
+                            Grid? grid = element as Grid;
+                            if (grid == null) return;
+                            string? cmdstosent = null;
+                            string? strintv = null;
 
-                        int intv;
-                        if (strintv != null && cmdstosent != null && int.TryParse(strintv, out intv))
-                        {
-                            if(intv > 0)
+                            foreach (UIElement element2 in grid.Children)
                             {
-                                if(secondly_accumulatly_number % intv == 0)
+                                if (element2 is TextBox textBox)
                                 {
-                                    if (cmdstosent.Length != 0)
+                                    int cidx = Grid.GetColumn(textBox);
+                                    if (cidx == 0)
                                     {
-                                        cmdstosent = cmdstosent.Replace("\\r", "\r");
-                                        cmdstosent = cmdstosent.Replace("\\n", "\n");
-                                        sendmsg(cmdstosent);
+                                        cmdstosent = textBox.Text;
+                                    }
+                                    else if (cidx == 2)
+                                    {
+                                        strintv = textBox.Text;
                                     }
                                 }
                             }
-                        }
-                        else
-                        {
-                            println("Something Parsing Error");
-                        }
 
+                            int intv;
+                            if (strintv != null && cmdstosent != null && int.TryParse(strintv, out intv))
+                            {
+                                if(intv > 0)
+                                {
+                                    if(secondly_accumulatly_number % intv == 0)
+                                    {
+                                        if (cmdstosent.Length != 0)
+                                        {
+                                            cmdstosent = cmdstosent.Replace("\\r", "\r");
+                                            cmdstosent = cmdstosent.Replace("\\n", "\n");
+                                            sendmsg(cmdstosent);
+
+                                            await Task.Delay(100);
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                println("Something Parsing Error");
+                            }
+
+                        }
+                        catch(Exception e)
+                        {
+                            println(e.ToString());
+                        }
                     }
-                    catch(Exception e)
-                    {
-                        println(e.ToString());
-                    }
-                }
+                });
             });
 
 
