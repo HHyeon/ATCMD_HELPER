@@ -170,6 +170,10 @@ namespace ATCMD_HELPER
         uint secondly_accumulatly_number = 0;
         private void Commands_interval_send_timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
         {
+            lock (locking_for_serialPort)
+            {
+                if (!serialPort.IsOpen) return;
+            }
 
             Task.Factory.StartNew(() =>
             {
@@ -233,8 +237,6 @@ namespace ATCMD_HELPER
                     }
                 });
             });
-
-
 
         }
 
@@ -429,6 +431,11 @@ namespace ATCMD_HELPER
             {
                 closeserialport();
             }
+        }
+
+        private void loggingcontentsclear_Click(object sender, RoutedEventArgs e)
+        {
+            tb_logging.Text = "";
         }
     }
 }

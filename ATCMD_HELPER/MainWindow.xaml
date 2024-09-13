@@ -45,19 +45,36 @@
 
                 </Grid>
 
-                <Button
-                    x:Name="serialportselectionconfirm"
-                    Content="open"
-                    Margin="2" 
-                    Click="serialportselectionconfirm_Click"
-                    />
+                <Grid >
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button
+                        Grid.Column="0"
+                        x:Name="serialportselectionconfirm"
+                        Content="open"
+                        Margin="2" 
+                        Click="serialportselectionconfirm_Click"
+                        />
+
+                    <Button
+                        Grid.Column="1"
+                        x:Name="serialportclose"
+                        Content="close"
+                        Margin="2" Click="serialportclose_Click" 
+                        />
+
+                </Grid>
 
                 <Button
-                    x:Name="serialportclose"
-                    Content="close"
-                    Margin="2" Click="serialportclose_Click" 
+                    x:Name="loggingcontentsclear"
+                    Content="Log Clear"
+                    Margin="2" Click="loggingcontentsclear_Click"
                     />
-                
+
             </StackPanel>
 
             <StackPanel
